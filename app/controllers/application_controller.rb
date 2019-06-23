@@ -3,21 +3,21 @@ class ApplicationController < ActionController::API
   private
 
   def authenticate_user
-    # byebug
     if request.headers['Authorization'].present?
       user = User.find_by_authentication_token(request.headers['Authorization'])
       if user.present?
         @current_user = user
       else
-        head :unauthorized
+        unauthorized_render
       end
     else
-        head :unauthorized
+      unauthorized_render
     end
 
   end
 
-  def current_user
-
+  def unauthorized_render
+    render json: { type: "Unauthorized", code: 401, message: "Invalid token", error: true },
+        status: :unauthorized
   end
 end
